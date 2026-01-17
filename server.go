@@ -17,6 +17,7 @@ func main() {
 	ready := make(chan bool, 1)
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
+	
 	os.Exit(run(*addr, ready, interrupt))
 }
 
@@ -67,14 +68,18 @@ func run(addr string, ready chan<- bool, interrupt <-chan os.Signal) int {
 func serve(request http.Request, conn net.Conn) {
 	response := http.Response{
 		Version: "HTTP/1.1",
-		StatusCode: "404",
-		ReasonPhrase: "Not Found",
 		Headers: make(map[string]string),
 	}
+	
 	switch request.Method {
 		case http.MethodGet:
-			response.WriteFile("www" + request.URI)
+			err := response.WriteFile("www" + request.URI)
+			if err != nil {
+				log.Println(err)
+				return
+			}
 	}
+	
 	_, err := conn.Write([]byte(response.String()))
 	if err != nil {
 		log.Println(err)

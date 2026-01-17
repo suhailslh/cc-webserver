@@ -1,8 +1,7 @@
 package http
 
 import (
-	"io/ioutil"
-	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -34,17 +33,25 @@ func (r *Response) String() string {
 	return sb.String()
 }
 
-func (r *Response) WriteFile(path string) {
+func (r *Response) WriteFile(path string) error {
 	if path == "www/" {
 		path = "www/index.html"
 	}
-	data, err := ioutil.ReadFile(path)
+	
+	data, err := os.ReadFile(path)
 	if err != nil {
-		log.Println(err)
-		return
+		if os.IsNotExist(err) {
+			r.StatusCode = "404"
+			r.ReasonPhrase = "Not Found"
+			return nil
+		}
+		return err
 	}
+	
 	r.StatusCode = "200"
 	r.ReasonPhrase = "OK"
 	r.Headers[HeaderContentLength] = strconv.Itoa(len(data))
 	r.Body = string(data)
+	
+	return nil
 }
