@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -12,17 +11,15 @@ import (
 )
 
 func main() {
-	addr := flag.String("addr", "localhost:8080", "the listening address")
-	flag.Parse()
 	ready := make(chan bool, 1)
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 	
-	os.Exit(run(*addr, ready, interrupt))
+	os.Exit(run(ready, interrupt))
 }
 
-func run(addr string, ready chan<- bool, interrupt <-chan os.Signal) int {
-	listener, err := net.Listen("tcp", addr)
+func run(ready chan<- bool, interrupt <-chan os.Signal) int {
+	listener, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
 		log.Println(err)
 		return 1

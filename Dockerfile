@@ -20,4 +20,4 @@ WORKDIR /app
 
 COPY --from=build-stage /app/cc-webserver .
 
-ENTRYPOINT ["./cc-webserver", "-addr=0.0.0.0:8080"]
+ENTRYPOINT ["./cc-webserver"]

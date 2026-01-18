@@ -16,7 +16,7 @@ func TestRunConcurrent(t *testing.T) {
 	ready := make(chan bool, 1)
 	interrupt := make(chan os.Signal, 1)
 	go func() {
-		run("localhost:8080", ready, interrupt)
+		run(ready, interrupt)
 	}()
 	defer func() { interrupt <- os.Interrupt }()
 	
