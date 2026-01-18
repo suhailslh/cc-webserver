@@ -17,6 +17,7 @@ func TestRunConcurrentOK(t *testing.T) {
 	go func() {
 		run("localhost:8080", ready, interrupt)
 	}()
+	defer func() { interrupt <- os.Interrupt }()
 	
 	<-ready
 
@@ -50,9 +51,7 @@ func TestRunConcurrentOK(t *testing.T) {
 			}
 		}()
 	}
-	wg.Wait()
-	
-	interrupt <- os.Interrupt
+	wg.Wait()	
 }
 
 func TestRunConcurrentNotFound(t *testing.T) {
@@ -63,6 +62,7 @@ func TestRunConcurrentNotFound(t *testing.T) {
 	go func() {
 		run("localhost:8080", ready, interrupt)
 	}()
+	defer func() { interrupt <- os.Interrupt }()
 
 	<-ready
 	
@@ -97,6 +97,4 @@ func TestRunConcurrentNotFound(t *testing.T) {
 		}()
 	}
 	wg.Wait()
-	
-	interrupt <- os.Interrupt
 }
